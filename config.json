@@ -1,0 +1,30 @@
+{
+    "references": {
+        "genome": "/mnt/lustre/Home/petter_s/Area4/Snakemake/genome/GrCH38/GRCh38.p2.genome.fa"
+    },
+    "samples": {
+        "500525_S12": ["500525_S12"],
+        "700009_S1": ["700009_S1"]
+    },
+    "fastq": {
+        "500525_S12":
+            [ "/mnt/lustre/Active_Projects/MODY_targeted_NGS/Public/140512_M02318_0007_000000000-A7M6L/Data/Intensities/BaseCalls/500525_S12_L001_R1_001.fastq.gz", "/mnt/lustre/Active_Projects/MODY_targeted_NGS/Public/140512_M02318_0007_000000000-A7M6L/Data/Intensities/BaseCalls/500525_S12_L001_R2_001.fastq.gz"],
+        "700009_S1":
+            ["/mnt/lustre/Active_Projects/MODY_targeted_NGS/Public/140512_M02318_0007_000000000-A7M6L/Data/Intensities/BaseCalls/700009_S1_L001_R1_001.fastq.gz","/mnt/lustre/Active_Projects/MODY_targeted_NGS/Public/140512_M02318_0007_000000000-A7M6L/Data/Intensities/BaseCalls/700009_S1_L001_R2_001.fastq.gz"]
+    },
+    "known_variants": {
+        "dbsnp": "path/to/dbsnp.vcf",
+        "hapmap": "path/to/hapmap_3.3.vcf",
+        "g1k": "path/to/1000G_phase1.snps.high_confidence.vcf",
+        "omni": "path/to/1000G_omni2.5.vcf",
+        "mills": "path/to/Mills_and_1000G_gold_standard.indels.vcf"
+    },
+    "Software": {
+        "BWA_PATH": "/mnt/lustre/Tools/Software/BWA/0.7.8/bin",
+        "GATK_PATH": "/mnt/lustre/Tools/Software/GATK/3.5",
+        "SAMTOOLS_PATH": "",
+        },
+    "platform": "Illumina",
+    "heterozygosity": 0.001,
+    "indel_heterozygosity": 1.25E-4
+}
