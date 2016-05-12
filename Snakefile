@@ -8,31 +8,28 @@ rule all:
 def _get_ref(wildcards):
     return config["references"]["genome"]
 
-def _get_units(pattern):
-    def apply(wildcards):
-        return expand(
-            pattern, reference=wildcards.reference,
-            unit=[
-                unit for sample in config["samples"].values()
-                for unit in sample
-            ])
-    return apply
+UNIT_TO_SAMPLE = {
+    unit: sample for sample, units in config["samples"].items()
+    for unit in units}
+
+
 
 rule bwa_map:
     input:
-        _get_units("mapping/{reference}/units/{unit}.sorted.bam.bai"),
-        ref=_get_ref,
-        bams=_get_units("mapping/{reference}/units/{unit}.sorted.bam")
+        _get_ref,
+        lambda wildcards: config["units"][wildcards.unit]
     output:
-        temp("mapped_reads/{sample}.bam")
-    threads: 8
+        "mapped_reads/{unit}.bam"
     params:
-        rg="@RG\\tID:{sample}\\tSM:{sample}"
-    log:
-        "logs/bwa_map/{sample}.log"
+        sample=lambda wildcards: UNIT_TO_SAMPLE[wildcards.unit],
+        custom=config.get("params_bwa_mem", "")
+    threads: 8
     shell:
-        "({config[Software][BWA_PATH]}/bwa mem -R '{params.rg}' -t {threads} {input} | "
-        "samtools view -Shb - > {output}) 2> {log}"
+        "bwa mem {params.custom} "
+        r"-R '@RG\tID:{wildcards.unit}\t"
+        "SM:{params.sample}\tPL:{config[platform]}' "
+        "-t {threads} {input}   "
+        "| samtools view -Sbh - > {output}"
 
 rule samtools_sort:
     input:
