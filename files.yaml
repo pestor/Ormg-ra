@@ -1,0 +1,6 @@
+sample:
+ 500525_S12: /mnt/lustre/Active_Projects/MODY_targeted_NGS/Public/140512_M02318_0007_000000000-A7M6L/Data/Intensities/BaseCalls/500525_S12_L001_R1_001.fastq.gz
+ 700009_S1: /mnt/lustre/Active_Projects/MODY_targeted_NGS/Public/140512_M02318_0007_000000000-A7M6L/Data/Intensities/BaseCalls/700009_S1_L001_R1_001.fastq.gz
+ 700030_S13: /mnt/lustre/Active_Projects/MODY_targeted_NGS/Public/140512_M02318_0007_000000000-A7M6L/Data/Intensities/BaseCalls/700030_S13_L001_R1_001.fastq.gz
+ 700047_S25: /mnt/lustre/Active_Projects/MODY_targeted_NGS/Public/140512_M02318_0007_000000000-A7M6L/Data/Intensities/BaseCalls/700047_S25_L001_R1_001.fastq.gz
+ 700075_S37: /mnt/lustre/Active_Projects/MODY_targeted_NGS/Public/140512_M02318_0007_000000000-A7M6L/Data/Intensities/BaseCalls/700075_S37_L001_R1_001.fastq.gz
