@@ -19,7 +19,7 @@ rule bwa_map:
     log:
         "logs/bwa_map/{sample}.log"
     shell:
-        "(/mnt/lustre/Tools/Software/BWA/0.7.8/bin/bwa mem -R '{params.rg}' -t {threads} {input} | "
+        "(BWA_PATH/bwa mem -R '{params.rg}' -t {threads} {input} | "
         "samtools view -Shb - > {output}) 2> {log}"
 
 rule samtools_sort:
@@ -29,7 +29,7 @@ rule samtools_sort:
         "sorted_reads/{sample}.bam"
     threads: 8
     shell:
-        "samtools sort -@ {threads} {input} -f {output}"
+        "{SAMTOOLS_PATH}/samtools sort -@ {threads} {input} -f {output}"
 
 rule samtools_index:
     input:
@@ -56,7 +56,7 @@ rule haploC_call:
         "calls/{sample}.raw.vcf"
     log:
         "logs/{sample}.gatk"
-    shell:	"java -jar -Xmx32g /mnt/lustre/Tools/Software/GATK/3.5/GenomeAnalysisTK.jar "
+    shell:	"java -jar -Xmx32g {GATK_PATH}/GenomeAnalysisTK.jar "
     	"-T HaplotypeCaller "
     	"-R {input.fa} "
     	"-I {input.bam} "
@@ -79,7 +79,7 @@ rule combineGVCFs:
     run:
         vcfs = _gatk_multi_arg("--variant ",input.vcfs)
         shell(
-            "java -jar /mnt/lustre/Tools/Software/GATK/3.5/GenomeAnalysisTK.jar "
+            "java -jar {GATK_PATH}/GenomeAnalysisTK.jar "
             "-T CombineGVCFs "
             "-R {IDX} "
             "{vcfs} "
