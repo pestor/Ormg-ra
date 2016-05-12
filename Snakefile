@@ -1,16 +1,27 @@
-configfile: "files.yaml"
-include: "config.py"
+configfile: "config.json"
 
 rule all:
     input:
         "report.html",
 
 
+def _get_ref(wildcards):
+    return config["references"]["genome"]
+
+def _get_units(pattern):
+    def apply(wildcards):
+        return expand(
+            pattern, reference=wildcards.reference,
+            unit=[
+                unit for sample in config["samples"].values()
+                for unit in sample
+            ])
+    return apply
+
 rule bwa_map:
     input:
-        IDX,
-	fwd="/mnt/lustre/Active_Projects/MODY_targeted_NGS/Public/140512_M02318_0007_000000000-A7M6L/Data/Intensities/BaseCalls/{sample}_L001_R1_001.fastq.gz",
-	rev="/mnt/lustre/Active_Projects/MODY_targeted_NGS/Public/140512_M02318_0007_000000000-A7M6L/Data/Intensities/BaseCalls/{sample}_L001_R2_001.fastq.gz"
+        ref=_get_ref,
+	    fwd=_get_units("mapping/units/{unit}.sorted.bam")
     output:
         temp("mapped_reads/{sample}.bam")
     threads: 8
@@ -19,7 +30,7 @@ rule bwa_map:
     log:
         "logs/bwa_map/{sample}.log"
     shell:
-        "(BWA_PATH/bwa mem -R '{params.rg}' -t {threads} {input} | "
+        "({config[Software][BWA_PATH]}/bwa mem -R '{params.rg}' -t {threads} {input} | "
         "samtools view -Shb - > {output}) 2> {log}"
 
 rule samtools_sort:
@@ -29,7 +40,7 @@ rule samtools_sort:
         "sorted_reads/{sample}.bam"
     threads: 8
     shell:
-        "{SAMTOOLS_PATH}/samtools sort -@ {threads} {input} -f {output}"
+        "{config[Software][SAMTOOLS_PATH]}/samtools sort -@ {threads} {input} -f {output}"
 
 rule samtools_index:
     input:
@@ -49,16 +60,16 @@ rule generate_dag:
 
 rule haploC_call:
     input:
-        fa=IDX,
+        ref=_get_ref,
         bam="sorted_reads/{sample}.bam",
         bai="sorted_reads/{sample}.bam.bai"
     output:
         "calls/{sample}.raw.vcf"
     log:
         "logs/{sample}.gatk"
-    shell:	"java -jar -Xmx32g {GATK_PATH}/GenomeAnalysisTK.jar "
+    shell:	"java -jar -Xmx32g {config[Software][GATK_PATH]}/GenomeAnalysisTK.jar "
     	"-T HaplotypeCaller "
-    	"-R {input.fa} "
+    	"-R {input.ref} "
     	"-I {input.bam} "
     	"--genotyping_mode DISCOVERY "
     	"-stand_emit_conf 10 "
@@ -70,18 +81,19 @@ def _gatk_multi_arg(flag, files):
     flag += " "
     return " ".join(flag + f for f in files)
 
+
 rule combineGVCFs:
     input:
-        fa=IDX,
-        vcfs=expand("calls/{sample}.raw.vcf", sample=config["sample"])
+        ref=_get_ref,
+        vcfs=expand("calls/{sample}.raw.vcf", sample=config["samples"])
     output:
         "Combined.vcf"
     run:
         vcfs = _gatk_multi_arg("--variant ",input.vcfs)
         shell(
-            "java -jar {GATK_PATH}/GenomeAnalysisTK.jar "
+            "java -jar {config[Software][GATK_PATH]}/GenomeAnalysisTK.jar "
             "-T CombineGVCFs "
-            "-R {IDX} "
+            "-R {input.ref} "
             "{vcfs} "
             "-o {output} ")
 
