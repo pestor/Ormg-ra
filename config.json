@@ -6,7 +6,7 @@
         "500525_S12": ["500525_S12"],
         "700009_S1": ["700009_S1"]
     },
-    "fastq": {
+    "units": {
         "500525_S12":
             [ "/mnt/lustre/Active_Projects/MODY_targeted_NGS/Public/140512_M02318_0007_000000000-A7M6L/Data/Intensities/BaseCalls/500525_S12_L001_R1_001.fastq.gz", "/mnt/lustre/Active_Projects/MODY_targeted_NGS/Public/140512_M02318_0007_000000000-A7M6L/Data/Intensities/BaseCalls/500525_S12_L001_R2_001.fastq.gz"],
         "700009_S1":

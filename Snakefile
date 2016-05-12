@@ -20,8 +20,9 @@ def _get_units(pattern):
 
 rule bwa_map:
     input:
+        _get_units("mapping/{reference}/units/{unit}.sorted.bam.bai"),
         ref=_get_ref,
-	    fwd=_get_units("mapping/units/{unit}.sorted.bam")
+        bams=_get_units("mapping/{reference}/units/{unit}.sorted.bam")
     output:
         temp("mapped_reads/{sample}.bam")
     threads: 8
