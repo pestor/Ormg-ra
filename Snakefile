@@ -14,6 +14,17 @@ UNIT_TO_SAMPLE = {
 
 
 
+rule build_bwa_index:
+    input:
+        fasta=config["references"]["genome"]
+    output:
+        "{config[references][genome]}.bwt"
+    params:
+        custom=config.get("params_bwa_mem_index", "")
+    shell:
+        "{config[Software][BWA_PATH]}/bwa index {params} {input.fasta}"
+
+
 rule bwa_map:
     input:
         _get_ref,
@@ -23,9 +34,9 @@ rule bwa_map:
     params:
         sample=lambda wildcards: UNIT_TO_SAMPLE[wildcards.unit],
         custom=config.get("params_bwa_mem", "")
-    threads: 8
+    threads: 5
     shell:
-        "bwa mem {params.custom} "
+        "{config[Software][BWA_PATH]}/bwa mem {params.custom} "
         r"-R '@RG\tID:{wildcards.unit}\t"
         "SM:{params.sample}\tPL:{config[platform]}' "
         "-t {threads} {input}   "
@@ -38,7 +49,7 @@ rule samtools_sort:
         "sorted_reads/{sample}.bam"
     threads: 8
     shell:
-        "{config[Software][SAMTOOLS_PATH]}/samtools sort -@ {threads} {input} -f {output}"
+        "{config[Software][SAMTOOLS_PATH]}samtools sort -@ {threads} {input} -f {output}"
 
 rule samtools_index:
     input:
@@ -91,13 +102,27 @@ rule combineGVCFs:
         shell(
             "java -jar {config[Software][GATK_PATH]}/GenomeAnalysisTK.jar "
             "-T CombineGVCFs "
+            "--unsafe LENIENT_VCF_PROCESSING "
             "-R {input.ref} "
             "{vcfs} "
             "-o {output} ")
 
+
+rule snpEff:
+    input:
+        vcf="Combined.vcf"
+    #    ref=""
+    output:
+        "Combined.snpEff.vcf"
+    shell:
+        "java -jar {config[Software][SNPEFF_PATH]}/snpEff.jar "
+        " -v {config[references][snpEff]} -stats ex1.html "
+        "{input.vcf} > {output}"
+
 rule report:
     input:
         "Combined.vcf",
+        "Combined.snpEff.vcf",
         "dag.svg"
     output:
         "report.html"

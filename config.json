@@ -1,6 +1,7 @@
 {
     "references": {
-        "genome": "/mnt/lustre/Home/petter_s/Area4/Snakemake/genome/GrCH38/GRCh38.p2.genome.fa"
+        "genome": "/mnt/lustre/Home/petter_s/Area4/Snakemake/genome/GrCH38/GRCh38.p2.genome.fa",
+        "snpEff": "GRCh38.p2.RefSeq"
     },
     "samples": {
         "500525_S12": ["500525_S12"],
@@ -23,6 +24,7 @@
         "BWA_PATH": "/mnt/lustre/Tools/Software/BWA/0.7.8/bin",
         "GATK_PATH": "/mnt/lustre/Tools/Software/GATK/3.5",
         "SAMTOOLS_PATH": "",
+        "SNPEFF_PATH": "~/bin/snpEff",
         },
     "platform": "Illumina",
     "heterozygosity": 0.001,
